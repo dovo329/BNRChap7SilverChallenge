@@ -6,7 +6,62 @@
 //  Copyright (c) 2014 John Gallagher. All rights reserved.
 //
 
+/*
 #import "BNRAppDelegate.h"
+#import "BNRHypnosisView.h"
+
+@interface BNRAppDelegate () <UIScrollViewDelegate>
+
+@property (nonatomic, strong) BNRHypnosisView *hypnosisView;
+
+@end
+
+@implementation BNRAppDelegate
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // Override point for customization after application launch.
+    
+    // Create CGRects for frames
+    CGRect screenRect = self.window.bounds;
+    CGRect bigRect = screenRect;
+    bigRect.size.width *= 2.0;
+    
+    // Create a screen-sized scroll view and add it to the window
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:screenRect];
+    scrollView.pagingEnabled = NO;
+    scrollView.delegate = self;
+    scrollView.maximumZoomScale = 5.0;
+    scrollView.minimumZoomScale = 0.5;
+    
+    [self.window addSubview:scrollView];
+    
+    // Create a super-sized Hypnosis view and add it to the scroll view
+    self.hypnosisView = [[BNRHypnosisView alloc] initWithFrame:screenRect];
+    [scrollView addSubview:self.hypnosisView];
+    
+    
+    
+    // Tell the scroll view how big its content area is
+    scrollView.contentSize = bigRect.size;
+    
+    self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
+    return YES;
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    return self.hypnosisView;
+}
+
+@end
+*/
+
+
+#import "BNRAppDelegate.h"
+#import "BNRHypnosisView.h"
 #import "BNRHypnosisViewController.h"
 #import "BNRReminderViewController.h"
 
@@ -17,12 +72,11 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
 
-
     BNRHypnosisViewController *hvc = [[BNRHypnosisViewController alloc] init];
 
     // Look in the appBundle for the file BNRReminderViewController.xib
     BNRReminderViewController *rvc = [[BNRReminderViewController alloc] init];
-
+    
     UITabBarController *tabBarController = [[UITabBarController alloc] init];
     tabBarController.viewControllers = @[hvc, rvc];
 

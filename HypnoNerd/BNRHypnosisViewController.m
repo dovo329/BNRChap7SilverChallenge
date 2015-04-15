@@ -9,12 +9,30 @@
 #import "BNRHypnosisViewController.h"
 #import "BNRHypnosisView.h"
 
+@interface BNRHypnosisViewController () <UITextFieldDelegate, UIScrollViewDelegate>
 
-@interface BNRHypnosisViewController () <UITextFieldDelegate>
+@property (nonatomic) UIScrollView *scrollView;
+@property (nonatomic) BNRHypnosisView *hypnosisView;
+
 @end
 
-
 @implementation BNRHypnosisViewController
+
+// The UIScrollView class can have a delegate that must adopt the UIScrollViewDelegate protocol. For zooming and panning to work, the delegate must implement both viewForZoomingInScrollView: and scrollViewDidEndZooming:withView:atScale:; in addition, the maximum (maximumZoomScale) and minimum ( minimumZoomScale) zoom scale must be different.
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    UIView *view = self.hypnosisView;
+    NSLog(@"view is %@", view);
+    return view;
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView
+                       withView:(UIView *)view
+                        atScale:(CGFloat)scale
+{
+    
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -49,7 +67,10 @@
 {
     // Create a view
     CGRect frame = [UIScreen mainScreen].bounds;
-    BNRHypnosisView *backgroundView = [[BNRHypnosisView alloc] initWithFrame:frame];
+    CGRect bigRect = CGRectMake(CGRectGetMinX(frame), CGRectGetMinY(frame), CGRectGetWidth(frame)*5.0, CGRectGetHeight(frame)*5.0);
+
+    self.scrollView = [[UIScrollView alloc] initWithFrame:bigRect];
+    self.hypnosisView = [[BNRHypnosisView alloc] initWithFrame:bigRect];
     
     CGRect textFieldRect = CGRectMake(40, 70, 240, 30);
     UITextField *textField = [[UITextField alloc] initWithFrame:textFieldRect];
@@ -60,10 +81,17 @@
     
     textField.delegate = self;
     
-    [backgroundView addSubview:textField];
+    [self.hypnosisView addSubview:textField];
 
+    CGSize scrollViewSize = CGSizeMake(CGRectGetWidth(bigRect), CGRectGetHeight(bigRect));
+    self.scrollView.contentSize = scrollViewSize;
+    self.scrollView.minimumZoomScale = 0.01;
+    self.scrollView.maximumZoomScale = 10.0;
+    self.scrollView.delegate = self;
+    [self.scrollView addSubview:self.hypnosisView];
     // Set it as *the* view of this view controller
-    self.view = backgroundView;
+    //self.view = self.hypnosisView;
+    self.view = self.scrollView;
 }
 
 - (void)viewDidLoad
